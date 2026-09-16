@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 92" role="img" aria-labelledby="title desc">
+  <title id="title">望龍埤標誌</title><desc id="desc">以湖波與朱紅拱橋構成的望龍埤識別</desc>
+  <g transform="translate(5 7)">
+    <circle cx="39" cy="39" r="36" fill="#173f30"/>
+    <path d="M13 46c8-6 16-9 26-9s19 3 27 9" fill="none" stroke="#c34b38" stroke-width="6" stroke-linecap="round"/>
+    <path d="M13 48h52" stroke="#c34b38" stroke-width="4" stroke-linecap="round"/>
+    <path d="M16 57c8 4 15 4 23 0 8-4 15-4 23 0" fill="none" stroke="#dfeee5" stroke-width="4" stroke-linecap="round"/>
+    <path d="M19 65c7 3 13 3 20 0 7-3 13-3 20 0" fill="none" stroke="#9ecbb0" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <text x="92" y="48" font-size="38" font-weight="700" fill="#173f30" font-family="'Noto Serif TC','Songti TC','PMingLiU',serif">望龍埤</text>
+  <text x="94" y="70" font-size="12" font-weight="700" letter-spacing="4" fill="#7b8f82" font-family="system-ui,sans-serif">YUANSHAN · YILAN</text>
+</svg>

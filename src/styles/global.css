@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-lake-50: #f2f8f4;
+  --color-lake-100: #e1eee6;
+  --color-lake-200: #c3ddcf;
+  --color-lake-300: #97c2aa;
+  --color-lake-400: #66a381;
+  --color-lake-500: #448460;
+  --color-lake-600: #356a4c;
+  --color-lake-700: #2d543f;
+  --color-lake-800: #274536;
+  --color-lake-900: #213a2f;
+  --color-lake-950: #101f19;
+  --color-bridge: #b84232;
+  --color-bridge-dark: #813026;
+  --color-mist: #edf1ea;
+  --font-sans: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+}
+
+:root { color-scheme: light; }
+html { scroll-behavior: smooth; background: #f2f5ef; }
+body { margin: 0; font-family: var(--font-sans); color: #173126; background: #f2f5ef; }
+::selection { background: #b84232; color: white; }
+
+.paper-grain {
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,.85), transparent 24%),
+    radial-gradient(circle at 80% 30%, rgba(99,130,104,.11), transparent 27%),
+    linear-gradient(120deg, rgba(255,255,255,.45), rgba(232,239,231,.5));
+}
+
+.mountain-lines {
+  background-image:
+    linear-gradient(135deg, transparent 58%, rgba(31,70,52,.06) 59%, transparent 60%),
+    linear-gradient(45deg, transparent 65%, rgba(31,70,52,.045) 66%, transparent 67%);
+  background-size: 42px 42px, 68px 68px;
+}
+
+.section-shell { width: min(1180px, calc(100% - 2rem)); margin-inline: auto; }
+.eyebrow { letter-spacing: .18em; text-transform: uppercase; font-size: .74rem; font-weight: 700; color: #b84232; }
+.display { font-family: var(--font-serif); font-weight: 700; letter-spacing: .02em; }
+.card-shadow { box-shadow: 0 24px 70px rgba(21, 50, 38, .11); }
+
+.focus-ring:focus-visible { outline: 3px solid #b84232; outline-offset: 4px; }
+
+.hero-photo {
+  background-image:
+    linear-gradient(90deg, rgba(13, 32, 24, .82) 0%, rgba(13, 32, 24, .52) 48%, rgba(13, 32, 24, .22) 100%),
+    url('https://upload.wikimedia.org/wikipedia/commons/f/f2/Wang_Long_Lake_%E6%9C%9B%E9%BE%8D%E5%9F%A4_-_panoramio.jpg');
+  background-size: cover;
+  background-position: center;
+}
