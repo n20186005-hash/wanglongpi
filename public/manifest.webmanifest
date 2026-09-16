@@ -1,0 +1,27 @@
+{
+  "name": "望龍埤｜宜蘭員山旅遊指南",
+  "short_name": "望龍埤",
+  "description": "望龍埤旅遊指南：環湖步道、九曲橋、飛龍步道、交通、停車、周邊美食與景點，一頁規劃宜蘭員山半日慢旅。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f2f5ef",
+  "theme_color": "#173f30",
+  "lang": "zh-Hant-TW",
+  "categories": ["travel", "tourism", "education"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,6 +1,32 @@
+# ── 依賴與建置產物（不需要上傳 / 提交）──
 node_modules/
 dist/
 .astro/
+
+# ── Cloudflare Workers ──
 .wrangler/
-.dev.vars
+.dev.vars            # 含密鑰，請勿提交
+# 若使用 wrangler.toml 部署，請自行決定是否納入版本控制
+
+# ── 日誌與暫存 ──
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── 環境變數 / 密鑰 ──
+.env
+.env.*
+!.env.example
+
+# ── 編輯器與作業系統 ──
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── 套件管理鎖檔（本專案使用 pnpm）──
+package-lock.json

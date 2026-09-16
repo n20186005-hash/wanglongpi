@@ -49,8 +49,11 @@ Logo、favicon 與 OG cover 均為專案本地資產。頁面實景照片使用 
 
 ## SEO / 結構化資料
 
-- TouristAttraction JSON-LD（名稱、地址、座標、開放時間、評分、免費屬性）
+- TouristAttraction JSON-LD（名稱、`@id`、`image`、地址、座標、開放時間、`hasMap`、`sameAs`、免費屬性；評分與評價數僅於頁面展示並標註來源，不寫入 JSON-LD 以符合 Google 評價政策）
 - FAQPage JSON-LD
+- PWA：`public/manifest.webmanifest` 與 `public/sw.js`（僅在正式環境註冊 Service Worker）
+- 即時天氣：`src/pages/api/weather.ts` 由 Cloudflare Worker 伺服器端向氣象來源取得並快取（約 30 分鐘），前端 `src/components/Weather.astro` 只向本路由 `/api/weather` 取數，頁面不暴露來源細節；含降水機率、風力（蒲福級）、紫外線與 7 日預報，並依天氣自動產出出行穿搭 / 遊玩安排 / 隨身物品 / 風險提醒。
+- 內容區塊：地名由來與生態（`#heritage`）、四季遊覽策略表（`#seasons`）、推薦路線 半日/全日 與 親子/攝影/無障礙（`#routes`）、訪客服務類型總覽（`#services`）、科普與訪客責任（`#responsibility`）。
 - canonical / Open Graph 由 Astro `site` 派生
 - sitemap 僅在 `site` 有值時啟用 `@astrojs/sitemap`
 - `robots.txt` 同樣依 `site` 決定是否輸出 sitemap URL

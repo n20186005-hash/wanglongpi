@@ -1,0 +1,249 @@
+---
+// 望龍埤即時天氣模組：資料由本站伺服器端從氣象來源取得並快取（見 /api/weather）
+---
+
+<section id="weather" class="bg-lake-50 py-22 sm:py-28">
+  <div class="section-shell">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        <p class="eyebrow">Live Weather · 即時天氣</p>
+        <h2 class="display mt-4 text-4xl text-lake-950 sm:text-5xl">望龍埤即時天氣與 7 日預報</h2>
+      </div>
+      <p class="max-w-xs text-right text-xs leading-5 text-lake-900/45">資料僅供出遊參考，實際天氣請以現場與中央氣象署公告為準。</p>
+    </div>
+
+    <!-- 當前天氣卡片 -->
+    <div id="wx-current" class="card-shadow mt-10 flex flex-col gap-6 rounded-[2rem] bg-white p-7 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+      <div class="flex items-center gap-5">
+        <span id="wx-emoji" class="text-6xl leading-none">⛅</span>
+        <div>
+          <p id="wx-temp" class="display text-5xl text-lake-950">--°</p>
+          <p id="wx-label" class="mt-1 text-sm text-lake-900/60">讀取天氣中…</p>
+        </div>
+      </div>
+      <dl class="grid grid-cols-3 gap-x-6 gap-y-3 text-sm sm:gap-x-10">
+        <div><dt class="text-lake-900/45">降水機率</dt><dd id="wx-precip" class="mt-1 font-semibold text-lake-900">--%</dd></div>
+        <div><dt class="text-lake-900/45">風力</dt><dd id="wx-wind" class="mt-1 font-semibold text-lake-900">-- 級</dd></div>
+        <div><dt class="text-lake-900/45">紫外線</dt><dd id="wx-uv" class="mt-1 font-semibold text-lake-900">--</dd></div>
+      </dl>
+    </div>
+
+    <!-- 風險提醒：紅色置頂，無預警則隱藏 -->
+    <div id="wx-risk" class="hidden mt-6 rounded-[2rem] border border-red-300 bg-red-50 p-6 text-red-900">
+      <p class="flex items-center gap-2 text-sm font-bold"><span aria-hidden="true">⚠️</span> 風險提醒</p>
+      <ul id="wx-risk-list" class="mt-3 space-y-2 text-sm leading-7"></ul>
+    </div>
+
+    <!-- 三大建議區：動態渲染，條件不滿足即隱藏 -->
+    <div class="mt-6 grid gap-5 md:grid-cols-3">
+      <div id="wx-outfit" class="hidden rounded-[2rem] border border-lake-900/10 bg-white p-6">
+        <p class="eyebrow">出行穿搭</p>
+        <ul class="mt-3 space-y-2 text-sm leading-7 text-lake-900/72"></ul>
+      </div>
+      <div id="wx-activity" class="hidden rounded-[2rem] border border-lake-900/10 bg-white p-6">
+        <p class="eyebrow">游玩安排</p>
+        <ul class="mt-3 space-y-2 text-sm leading-7 text-lake-900/72"></ul>
+      </div>
+      <div id="wx-items" class="hidden rounded-[2rem] border border-lake-900/10 bg-white p-6">
+        <p class="eyebrow">随身物品</p>
+        <div class="mt-3 flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+
+    <!-- 7 日預報 -->
+    <div class="mt-10">
+      <p class="eyebrow">7 日預報</p>
+      <div id="wx-forecast" class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+        <p class="col-span-full text-sm text-lake-900/45">讀取預報中…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const section = document.getElementById('weather');
+  if (section) {
+    const $ = (id: string): HTMLElement => document.getElementById(id) as HTMLElement;
+
+    // WMO 天氣代碼 → 中文與分類
+    const WMO: Record<number, [string, string]> = {
+      0: ['晴朗', '☀️'], 1: ['晴時多雲', '🌤️'], 2: ['多雲', '⛅'], 3: ['陰', '☁️'],
+      45: ['有霧', '🌫️'], 48: ['霧淞', '🌫️'],
+      51: ['毛毛雨', '🌦️'], 53: ['小雨', '🌦️'], 55: ['小雨', '🌦️'],
+      56: ['凍雨', '🌧️'], 57: ['凍雨', '🌧️'],
+      61: ['小雨', '🌧️'], 63: ['中雨', '🌧️'], 65: ['大雨', '🌧️'],
+      66: ['凍雨', '🌧️'], 67: ['凍雨', '🌧️'],
+      71: ['小雪', '🌨️'], 73: ['中雪', '🌨️'], 75: ['大雪', '🌨️'], 77: ['雪粒', '🌨️'],
+      80: ['陣雨', '🌦️'], 81: ['陣雨', '🌧️'], 82: ['強陣雨', '🌧️'],
+      85: ['陣雪', '🌨️'], 86: ['陣雪', '🌨️'],
+      95: ['雷雨', '⛈️'], 96: ['雷雨冰雹', '⛈️'], 99: ['雷雨冰雹', '⛈️']
+    };
+    const wmo = (c: number): [string, string] => WMO[c] ?? ['多雲', '⛅'];
+    const category = (c: number): string => {
+      if (c === 0 || c === 1) return 'clear';
+      if (c === 2) return 'cloudy';
+      if (c === 3) return 'overcast';
+      if (c === 45 || c === 48) return 'fog';
+      if ([51, 53, 55, 56, 57, 61, 80].includes(c)) return 'lightrain';
+      if ([63, 66, 81].includes(c)) return 'midrain';
+      if ([65, 67, 82].includes(c)) return 'heavyrain';
+      if ([71, 73, 75, 77, 85, 86].includes(c)) return 'snow';
+      if ([95, 96, 99].includes(c)) return 'thunder';
+      return 'cloudy';
+    };
+    // km/h → 蒲福風級
+    const beaufort = (kmh: number): number => {
+      const t = [1, 5, 11, 19, 28, 38, 49, 61, 74, 88, 102, 117];
+      let i = 0;
+      while (i < t.length && kmh > t[i]) i++;
+      return i;
+    };
+    const uvText = (u: number): string => (u >= 8 ? '很強' : u >= 5 ? '強' : u >= 3 ? '中等' : '弱');
+
+    // 根據天氣上下文產出建議（望龍埤 = 湖邊 + 近山步道場景）
+    function buildAdvice(ctx: Record<string, any>): { risk: string[]; outfit: string[]; activity: string[]; items: string[] } {
+      const cat: string = ctx.cat;
+      const tMax: number = ctx.tMax;
+      const tMin: number = ctx.tMin;
+      const precip: number = ctx.precip;
+      const windB: number = ctx.windB;
+      const uv: number = ctx.uv;
+      const isRain: boolean = ctx.isRain;
+      const risk: string[] = [], outfit: string[] = [], activity: string[] = [], items = new Set<string>();
+
+      // —— 風險提醒（優先級最高，紅色置頂）——
+      if (ctx.alert) {
+        risk.push(`【⚠️氣象預警】${ctx.alert} 已發布，建議調整行程，盡量不要前往山區、湖邊等危險區域，密切關注天氣變化。`);
+      }
+      if (cat === 'thunder') {
+        risk.push('⚠️ 謹防雷電，不要登山、湖邊戲水或在樹下避雨；水上項目與遊船大概率關閉。');
+      }
+      if (cat === 'heavyrain') {
+        risk.push('⚠️ 降雨較強，避開山谷、低窪地帶；湖邊步道濕滑，遊船、纜車可能停運。');
+      }
+      if (windB >= 7) {
+        risk.push('⚠️ 大風天氣，遠離廣告牌、湖邊礁石與臨水欄杆；戶外湖上項目大概率關閉。');
+      }
+      if (cat === 'fog') {
+        risk.push('⚠️ 大霧能見度差，不適合觀景看山看湖；山徑與臨水路段請放慢腳步。');
+      }
+
+      // —— 出行穿搭 ——
+      if (precip >= 60) outfit.push('降水機率偏高，盡量攜帶雨具。');
+      if (cat === 'lightrain') outfit.push('有小雨，路面與木棧濕滑，走路注意防滑。');
+      if (cat === 'midrain' || cat === 'heavyrain') outfit.push('風雨較大，建議穿防水外套與防滑鞋。');
+      if (tMax >= 32) outfit.push(`氣溫偏高（最高 ${tMax}℃），建議輕薄透氣衣物，避開正午外出。`);
+      if (uv >= 5) outfit.push(`紫外線${uvText(uv)}（UV ${uv}），注意防曬。`);
+      if (tMax <= 10) outfit.push('氣溫偏低，注意防寒；厚外套、圍巾備用。');
+      if (tMax - tMin > 8) outfit.push('晝夜溫差大，建議備一件外套方便增減。');
+      if (cat === 'clear') outfit.push('天氣晴好，適合戶外遊覽。');
+      if (cat === 'overcast') outfit.push('光線柔和，很適合拍照。');
+      if (windB >= 5 && windB < 7) outfit.push('風力偏大，帽子容易被吹落，不建議穿寬鬆長裙。');
+
+      // —— 遊玩安排（湖邊 / 近山）——
+      if (precip >= 60 || isRain) activity.push('優先選擇湖畔咖啡、室內場景遮雨；戶外爬山與長時間湖畔漫步建議延後。');
+      if (cat === 'lightrain') activity.push('露天項目體驗較差，可安排室內或車覽路線。');
+      if (cat === 'midrain' || cat === 'heavyrain') activity.push('不建議戶外遊玩，遊船、纜車可能停運。');
+      if (cat === 'thunder') activity.push('水上項目大概率關閉，請勿下水。');
+      if (cat === 'clear') activity.push('適合看日出、日落與湖面倒影，山徑光線也佳。');
+      if (cat === 'overcast') activity.push('無暴晒，適合長時間戶外逛遊與拍照。');
+      if (tMax >= 32) activity.push('縮短戶外暴曬時段，多利用樹蔭與湖邊涼處休息。');
+      if (windB >= 5) activity.push('湖邊風大，遊船與部分露天項目可能停航，注意湖岸安全。');
+      if (cat === 'fog') activity.push('不適合觀景看山看湖，改以低海拔或室內路線。');
+
+      // —— 隨身物品（動態，只列需要的）——
+      if (precip >= 60 || isRain) items.add('雨傘 / 雨衣');
+      if (cat === 'lightrain') items.add('摺疊傘');
+      if (cat === 'midrain' || cat === 'heavyrain') items.add('雨衣（風大不宜長柄傘）');
+      if (tMax >= 32 || uv >= 5) items.add('防曬霜、墨鏡、遮陽帽');
+      if (tMax >= 32) items.add('充足飲用水、防暑用品');
+      if (uv >= 5) items.add('防曬乳');
+      if (tMax <= 10) items.add('厚外套、圍巾');
+      if (cat === 'fog') items.add('口罩');
+      if (cat === 'thunder') items.add('（雷雨）避免金屬傘具與樹下');
+
+      return { risk, outfit, activity, items: [...items] };
+    }
+
+    const setList = (el: HTMLElement | null, arr: string[]): void => {
+      if (!el) return;
+      const ul = (el.querySelector('ul') || el.querySelector('div')) as HTMLElement;
+      if (!arr.length) { el.classList.add('hidden'); return; }
+      el.classList.remove('hidden');
+      ul.innerHTML = arr.map((t: string) => `<li class="flex gap-2"><span class="text-bridge" aria-hidden="true">✓</span><span>${t}</span></li>`).join('');
+    };
+
+    const render = (data: any): void => {
+      const cur = data.current;
+      const d = data.daily;
+      const code = cur.weather_code as number;
+      const [label, emoji] = wmo(code);
+      const cat = category(code);
+      const isRain = ['lightrain', 'midrain', 'heavyrain', 'thunder'].includes(cat);
+
+      const tMax = Math.round(d.temperature_2m_max[0] as number);
+      const tMin = Math.round(d.temperature_2m_min[0] as number);
+      const precip = (d.precipitation_probability_max[0] as number) ?? 0;
+      const uv = Math.round((d.uv_index_max[0] as number) ?? 0);
+      const windB = Math.max(beaufort(cur.wind_speed_10m as number), beaufort(d.wind_speed_10m_max[0] as number));
+
+      $('wx-emoji').textContent = emoji;
+      $('wx-temp').textContent = `${Math.round(cur.temperature_2m)}°`;
+      $('wx-label').textContent = `${label} · 體感 ${Math.round(cur.apparent_temperature)}° · 最高 ${tMax}° / 最低 ${tMin}°`;
+      $('wx-precip').textContent = `${precip}%`;
+      $('wx-wind').textContent = `${windB} 級`;
+      $('wx-uv').textContent = uv ? uvText(uv) : '—';
+
+      const advice = buildAdvice({ cat, tMax, tMin, precip, windB, uv, isRain, alert: ctxAlert });
+      setList($('wx-outfit'), advice.outfit);
+      setList($('wx-activity'), advice.activity);
+
+      const itemsEl = $('wx-items');
+      const box = itemsEl.querySelector('div') as HTMLElement;
+      if (!advice.items.length) itemsEl.classList.add('hidden');
+      else {
+        itemsEl.classList.remove('hidden');
+        box.innerHTML = advice.items.map((t: string) => `<span class="rounded-full bg-lake-100 px-3 py-1 text-sm text-lake-900">${t}</span>`).join('');
+      }
+
+      const riskEl = $('wx-risk');
+      if (advice.risk.length) {
+        riskEl.classList.remove('hidden');
+        $('wx-risk-list').innerHTML = advice.risk.map((t: string) => `<li>${t}</li>`).join('');
+      } else {
+        riskEl.classList.add('hidden');
+      }
+
+      // 7 日預報
+      const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+      const fc = $('wx-forecast');
+      fc.innerHTML = (d.time as string[]).map((date: string, i: number) => {
+        const [, e2] = wmo(d.weather_code[i] as number);
+        const dt = new Date(date + 'T00:00');
+        const name = i === 0 ? '今天' : days[dt.getDay()];
+        const p = (d.precipitation_probability_max[i] as number) ?? 0;
+        return `<div class="rounded-2xl border border-lake-900/10 bg-white p-4 text-center">
+          <p class="text-xs font-semibold text-lake-900/70">${name}</p>
+          <p class="my-2 text-3xl">${e2}</p>
+          <p class="text-sm font-bold text-lake-950">${Math.round(d.temperature_2m_max[i])}°<span class="text-lake-900/45"> / ${Math.round(d.temperature_2m_min[i])}°</span></p>
+          <p class="mt-1 text-xs text-bridge">☔ ${p}%</p>
+        </div>`;
+      }).join('');
+    };
+
+    // 氣象預警保留擴充點；未來可由伺服器端併入後置頂紅色提示。
+    let ctxAlert = '';
+    const url = '/api/weather';
+
+    fetch(url)
+      .then((r) => { if (!r.ok) throw new Error('weather ' + r.status); return r.json(); })
+      .then(render)
+      .catch(() => {
+        $('wx-label').textContent = '暫時無法取得即時天氣';
+        (($('wx-current').querySelector('dl')) as HTMLElement).innerHTML =
+          '<p class="col-span-full text-sm text-lake-900/55">即時天氣取得失敗，請參考下方「行前提醒」與中央氣象署公告。</p>';
+        $('wx-forecast').innerHTML =
+          '<p class="col-span-full text-sm text-lake-900/45">7 日預報暫時無法載入。</p>';
+      });
+  }
+</script>

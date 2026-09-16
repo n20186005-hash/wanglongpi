@@ -1,25 +1,30 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Weather from '../components/Weather.astro';
 
 export const prerender = true;
 
 const title = '望龍埤｜宜蘭員山的湖光、朱橋與山林慢旅';
-const description = '望龍埤旅遊指南：環湖步道、九曲橋、飛龍步道、交通、停車、費用、周邊美食與景點，一頁規劃宜蘭員山半日慢旅。';
+const description = '望龍埤旅遊指南：環湖步道、九曲橋、飛龍步道、季節遊覽策略、推薦路線、訪客服務與即時天氣，一頁規劃宜蘭員山慢旅。';
 
 const siteUrl = Astro.site ? new URL('/', Astro.site).href : undefined;
 
 const attractionSchema = {
   '@context': 'https://schema.org',
   '@type': 'TouristAttraction',
+  ...(siteUrl ? { '@id': `${siteUrl}#attraction` } : {}),
   name: '望龍埤',
-  alternateName: '軟埤',
+  alternateName: ['望龙埤', '軟埤'],
   description,
   ...(siteUrl ? { url: siteUrl } : {}),
+  ...(siteUrl ? { image: [`${new URL('/images/wanglongpi-lake-main.jpg', siteUrl).href}`] } : {}),
+  isAccessibleForFree: true,
   address: {
     '@type': 'PostalAddress',
     streetAddress: '枕山村坡城路',
     addressLocality: '員山鄉',
     addressRegion: '宜蘭縣',
+    postalCode: '264',
     addressCountry: 'TW'
   },
   geo: {
@@ -33,12 +38,11 @@ const attractionSchema = {
     opens: '08:00',
     closes: '18:00'
   })),
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: 4.3,
-    bestRating: 5
-  },
-  isAccessibleForFree: true
+  hasMap: 'https://maps.app.goo.gl/KK4nDMoRzwuh9FoBA',
+  sameAs: [
+    'https://maps.app.goo.gl/KK4nDMoRzwuh9FoBA',
+    'https://travel.yilan.tw'
+  ]
 };
 
 const faqs = [
@@ -47,7 +51,11 @@ const faqs = [
   { q: '什麼時段最適合去望龍埤？', a: '上午或午後光線較柔和，也較適合散步與拍攝湖面倒影。冬季落羽松轉色時，景觀層次尤其明顯。' },
   { q: '可以搭大眾運輸到望龍埤嗎？', a: '可以。宜蘭綠16公車行經宜蘭轉運站、宜蘭火車站與「望龍埤」站；班次有限，出發前應再查即時班表。' },
   { q: '望龍埤好停車嗎？', a: '景區周邊設有停車空間，但假日熱門時段容易較滿。建議提早抵達，並以現場交通引導與收費標示為準。' },
-  { q: '雨天適合前往嗎？', a: '湖區雨後別有山霧氣氛，但石板、木棧與山徑可能濕滑；遇大雨、雷雨或步道封閉時不建議勉強進入山徑。' }
+  { q: '雨天適合前往嗎？', a: '湖區雨後別有山霧氣氛，但石板、木棧與山徑可能濕滑；遇大雨、雷雨或步道封閉時不建議勉強進入山徑。' },
+  { q: '望龍埤的名字由來是什麼？', a: '「埤」指天然或小型蓄水塘；「望龍」取意「雲從龍」古諺，反映農村對水與雨的期盼。在地另稱「軟埤」。' },
+  { q: '落羽松什麼時候轉色？', a: '周緣種植的落羽松約在 11 月起轉色、12 月至 2 月最為鮮明，紅黃綠與朱橋倒影是冬季重點景觀。' },
+  { q: '適合帶長輩或嬰兒車嗎？', a: '環湖步道平緩、多無障礙坡道，輪椅與嬰兒車可通行主要路段；雨天濕滑請放慢腳步。' },
+  { q: '可以在湖邊餵魚或水鳥嗎？', a: '建議不要。外來飼料會改變野生動物習性並影響水質與生態，以觀察取代投餵最友善。' }
 ];
 
 const faqSchema = {
@@ -64,6 +72,13 @@ const photo1 = 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Wang_Long_La
 const photo2 = 'https://upload.wikimedia.org/wikipedia/commons/c/c1/Wanglong_Lake_%E6%9C%9B%E9%BE%8D%E5%9F%A4_-_panoramio.jpg';
 const photo3 = 'https://upload.wikimedia.org/wikipedia/commons/6/6c/%E6%9C%9B%E9%BE%8D%E5%9F%A4_%E5%A4%8F_-_panoramio.jpg';
 const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9%BE%8D%E5%9F%A4.JPG';
+
+const mapsUrl = 'https://maps.app.goo.gl/KK4nDMoRzwuh9FoBA';
+const govTourismUrl = 'https://travel.yilan.tw';
+const ratingValue = 4.3;
+const reviewCount = 14965;
+const reviewSyncMonth = '2026 年 9 月';
+const reviewSourceNote = '同步自 Google 地图用户评价，同步时间 2026 年 9 月；版权归原作者与 Google 地图所有。';
 ---
 <BaseLayout {title} {description}>
   <script type="application/ld+json" set:html={JSON.stringify(attractionSchema)}></script>
@@ -77,9 +92,13 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
       </a>
       <nav class="hidden items-center gap-6 text-sm text-white/78 md:flex" aria-label="主選單">
         <a class="focus-ring rounded hover:text-white" href="#explore">怎麼玩</a>
-        <a class="focus-ring rounded hover:text-white" href="#plan">行程資訊</a>
+        <a class="focus-ring rounded hover:text-white" href="#seasons">季節</a>
+        <a class="focus-ring rounded hover:text-white" href="#routes">路線</a>
         <a class="focus-ring rounded hover:text-white" href="#transport">交通</a>
+        <a class="focus-ring rounded hover:text-white" href="#weather">天氣</a>
+        <a class="focus-ring rounded hover:text-white" href="#services">服務</a>
         <a class="focus-ring rounded hover:text-white" href="#nearby">周邊</a>
+        <a class="focus-ring rounded hover:text-white" href="#reviews">評價</a>
         <a class="focus-ring rounded hover:text-white" href="#faq">FAQ</a>
       </nav>
       <a href="https://maps.app.goo.gl/KK4nDMoRzwuh9FoBA" target="_blank" rel="noopener noreferrer" class="focus-ring rounded-full bg-bridge px-4 py-2 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#c9513e]">開啟地圖</a>
@@ -104,7 +123,7 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
         <aside class="card-shadow rounded-[2rem] border border-white/15 bg-lake-950/58 p-6 backdrop-blur-xl sm:p-8">
           <div class="flex items-center justify-between border-b border-white/14 pb-5">
             <div><p class="text-xs tracking-[.2em] text-white/55">旅遊資訊</p><p class="mt-1 text-xl font-bold">今天怎麼安排</p></div>
-            <div class="text-right"><p class="text-xs text-white/55">公開評分</p><p class="display text-3xl text-[#f4d58d]">4.3<span class="ml-1 text-sm text-white/60">/ 5</span></p></div>
+            <div class="text-right"><p class="text-xs text-white/55">公開評分</p><p class="display text-3xl text-[#f4d58d]">4.3<span class="ml-1 text-sm text-white/60">/ 5</span></p><p class="mt-1 text-xs text-white/45">14,965 則評價</p></div>
           </div>
           <dl class="grid grid-cols-2 gap-x-5 gap-y-6 pt-6 text-sm">
             <div><dt class="text-white/48">開放時間</dt><dd class="mt-1 font-semibold">08:00–18:00</dd></div>
@@ -135,9 +154,25 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
         </div>
         <figure class="relative">
           <div class="absolute -left-5 -top-5 h-full w-full rounded-[2.5rem] border border-bridge/25"></div>
-          <img src={photo4} alt="山霧環繞下的望龍埤湖面與紅橋" width="1000" height="562" loading="lazy" class="card-shadow relative aspect-[16/10] w-full rounded-[2.5rem] object-cover" />
+          <img src={photo4} alt="望龍埤（員山鄉, 宜蘭縣）湖面與朱橋實景" width="1000" height="562" loading="lazy" class="card-shadow relative aspect-[16/10] w-full rounded-[2.5rem] object-cover" />
           <figcaption class="mt-3 text-xs text-lake-800/48">望龍埤湖景｜實景照片，Wikimedia Commons</figcaption>
         </figure>
+      </div>
+    </section>
+
+    <section id="heritage" class="py-22 sm:py-28">
+      <div class="section-shell grid gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-start">
+        <div>
+          <p class="eyebrow">Heritage & ecology · 地景與記憶</p>
+          <h2 class="display mt-4 text-4xl leading-tight text-lake-950 sm:text-5xl">不只是一座湖，<br />是一段農村與山林的關係。</h2>
+          <p class="mt-6 text-base leading-8 text-lake-900/62">望龍埤能成為今天的樣子，來自水、農田與社區長年的相處。理解這層背景，會讓湖畔的每一步更有層次。</p>
+        </div>
+        <div class="grid gap-5 sm:grid-cols-2">
+          <article class="card-shadow rounded-[2rem] bg-white p-7"><p class="eyebrow">水利與農業</p><h3 class="display mt-3 text-2xl text-lake-950">從灌溉埤塘開始</h3><p class="mt-4 text-sm leading-7 text-lake-900/64">早年由山麓湧泉與雨水匯集而成，是枕山村農田灌溉的重要蓄水塘；「望龍」二字取意「雲從龍」古諺，也承載農村對水與雨的期盼。</p></article>
+          <article class="card-shadow rounded-[2rem] bg-white p-7"><p class="eyebrow">社區營造</p><h3 class="display mt-3 text-2xl text-lake-950">埤塘變成慢活的湖</h3><p class="mt-4 text-sm leading-7 text-lake-900/64">在員山鄉公所與枕山社區推動下，周邊整理為環湖步道、九曲橋與望龍亭，成為兼具生態與休閒的社區空間。</p></article>
+          <article class="card-shadow rounded-[2rem] bg-white p-7"><p class="eyebrow">民間傳說</p><h3 class="display mt-3 text-2xl text-lake-950">龍形山勢的說法</h3><p class="mt-4 text-sm leading-7 text-lake-900/64">在地流傳周圍山形如龍、與「飛龍步道」相呼應的龍地景敘事。此類說法屬民間文資，宜以故事而非考據看待。</p></article>
+          <article class="card-shadow rounded-[2rem] bg-white p-7"><p class="eyebrow">生態基底</p><h3 class="display mt-3 text-2xl text-lake-950">水鳥與落羽松</h3><p class="mt-4 text-sm leading-7 text-lake-900/64">湖域是白鷺、夜鷺、翠鳥與兩棲、蜻蛉的棲地；周緣種有落羽松，冬季轉色形成紅黃綠倒影，是望龍埤最鮮明的季節景觀。</p></article>
+        </div>
       </div>
     </section>
 
@@ -155,8 +190,105 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
           <article class="rounded-[2rem] border border-white/10 bg-white/[.055] p-7"><span class="display text-5xl text-white/18">04</span><h3 class="mt-6 text-xl font-bold">季節顏色</h3><p class="mt-3 text-sm leading-7 text-white/58">春夏看濃綠與水光；冬季留意落羽松轉色，讓紅黃綠與橋色彼此呼應。</p></article>
         </div>
         <div class="mt-10 grid gap-5 md:grid-cols-3">
-          <img src={photo1} alt="望龍埤九曲橋與湖岸綠意" width="1000" height="562" loading="lazy" class="h-72 w-full rounded-[2rem] object-cover md:col-span-2" />
-          <img src={photo3} alt="望龍埤夏季樹影與湖面" width="1000" height="562" loading="lazy" class="h-72 w-full rounded-[2rem] object-cover" />
+          <img src={photo1} alt="望龍埤九曲橋與湖岸綠意（員山鄉）" width="1000" height="562" loading="lazy" class="h-72 w-full rounded-[2rem] object-cover md:col-span-2" />
+          <img src={photo3} alt="望龍埤夏季樹影與湖面（宜蘭縣員山鄉）" width="1000" height="562" loading="lazy" class="h-72 w-full rounded-[2rem] object-cover" />
+        </div>
+      </div>
+    </section>
+
+    <section id="seasons" class="bg-lake-50 py-22 sm:py-28">
+      <div class="section-shell">
+        <div class="max-w-3xl">
+          <p class="eyebrow">Seasonal strategy · 四季遊覽策略</p>
+          <h2 class="display mt-4 text-4xl text-lake-950 sm:text-5xl">什麼時候去，<br />決定你看到什麼。</h2>
+          <p class="mt-5 text-base leading-8 text-lake-900/62">下表以宜蘭平地近 30 年氣候常態（climate normals）為基礎概括，並結合望龍埤湖域的水位、水質與物候觀察；實際天氣請以中央氣象署當日預報為準。</p>
+        </div>
+
+        <div class="mt-10 overflow-x-auto rounded-[2rem] border border-lake-900/10 bg-white">
+          <table class="w-full min-w-[760px] border-collapse text-sm">
+            <thead>
+              <tr class="bg-lake-100/60 text-left text-lake-900">
+                <th class="p-5 font-bold">季節</th>
+                <th class="p-5 font-bold">氣候與體感</th>
+                <th class="p-5 font-bold">水質與水位</th>
+                <th class="p-5 font-bold">野生動物觀察</th>
+                <th class="p-5 font-bold">遊覽建議</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-lake-900/10">
+              <tr class="align-top">
+                <td class="p-5 font-bold text-lake-950">春<span class="block text-xs font-normal text-lake-900/50">3–5 月</span></td>
+                <td class="p-5 leading-7 text-lake-900/68">東北季風減弱，氣溫回暖（約 15–25°C）；鋒面偶帶短暫陣雨。</td>
+                <td class="p-5 leading-7 text-lake-900/68">春雨補注，水位回穩；水質一般。</td>
+                <td class="p-5 leading-7 text-lake-900/68">留鳥活躍，繁殖季前鳥況佳；蜻蛉、蛙類漸多。</td>
+                <td class="p-5 leading-7 text-lake-900/68">適合環湖散步、拍攝嫩綠與倒影；備薄外套與摺傘。</td>
+              </tr>
+              <tr class="align-top">
+                <td class="p-5 font-bold text-lake-950">夏<span class="block text-xs font-normal text-lake-900/50">6–8 月</span></td>
+                <td class="p-5 leading-7 text-lake-900/68">高溫多濕（約 28–34°C）；午後雷陣雨頻，7–9 月為颱風季。</td>
+                <td class="p-5 leading-7 text-lake-900/68">雨量集中，水位較高、水質略濁；大雨後湖岸濕滑。</td>
+                <td class="p-5 leading-7 text-lake-900/68">翠鳥、白鷺活躍；蛙類、蜻蛉繁殖盛期。</td>
+                <td class="p-5 leading-7 text-lake-900/68">防曬、備水；留意午後雷陣雨與颱風停園公告，雷雨不待開闊湖畔。</td>
+              </tr>
+              <tr class="align-top">
+                <td class="p-5 font-bold text-lake-950">秋<span class="block text-xs font-normal text-lake-900/50">9–11 月</span></td>
+                <td class="p-5 leading-7 text-lake-900/68">天氣最穩定涼爽（約 20–28°C），雨勢減少、能見度佳。</td>
+                <td class="p-5 leading-7 text-lake-900/68">水位平穩、水質較清；秋高氣爽適合長時間戶外。</td>
+                <td class="p-5 leading-7 text-lake-900/68">候鳥陸續抵達；落羽松 11 月起轉色。</td>
+                <td class="p-5 leading-7 text-lake-900/68">全年最推薦的旅遊季；攝影、親子與山徑都舒適。</td>
+              </tr>
+              <tr class="align-top">
+                <td class="p-5 font-bold text-lake-950">冬<span class="block text-xs font-normal text-lake-900/50">12–2 月</span></td>
+                <td class="p-5 leading-7 text-lake-900/68">東北季風強，濕冷多雨（約 12–18°C）；宜蘭為北部多雨區。</td>
+                <td class="p-5 leading-7 text-lake-900/68">水位偏低、水質清；多雨能見度較差。</td>
+                <td class="p-5 leading-7 text-lake-900/68">越冬水鳥成群；落羽松轉紅／橙，景觀高峰。</td>
+                <td class="p-5 leading-7 text-lake-900/68">保暖、防滑；落羽松倒影是冬季重點，雨具仍必備。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-4 text-xs leading-6 text-lake-900/45">說明：上表為常年氣候態的概括描述，非即時預報，亦非精確統計數值；實際請以中央氣象署與現場公告為準。</p>
+      </div>
+    </section>
+
+    <section id="routes" class="paper-grain py-22 sm:py-28">
+      <div class="section-shell">
+        <div class="max-w-3xl">
+          <p class="eyebrow">Itineraries · 路線建議</p>
+          <h2 class="display mt-4 text-4xl text-lake-950 sm:text-5xl">給不同節奏的兩套走法。</h2>
+          <p class="mt-5 text-base leading-8 text-lake-900/62">不把路線寫死：以下為通用骨架，可依天氣、體力與同行者彈性調整。</p>
+        </div>
+
+        <div class="mt-10 grid gap-5 lg:grid-cols-2">
+          <article class="card-shadow rounded-[2rem] bg-white p-8">
+            <p class="eyebrow">半日 · 約 2–3 小時</p>
+            <h3 class="display mt-3 text-2xl text-lake-950">湖光慢走</h3>
+            <ol class="mt-5 space-y-3 text-sm leading-7 text-lake-900/68">
+              <li>① 入口集合 → 沿環湖步道慢行一圈</li>
+              <li>② 走上九曲橋與望龍亭，找朱橋倒影</li>
+              <li>③ 湖畔座椅或遮蔭處休息、拍照</li>
+              <li>④ 視情況於周邊餐飲類型店家補給後返程</li>
+            </ol>
+          </article>
+          <article class="card-shadow rounded-[2rem] bg-white p-8">
+            <p class="eyebrow">全日 · 約半日–一日</p>
+            <h3 class="display mt-3 text-2xl text-lake-950">湖山串遊</h3>
+            <ol class="mt-5 space-y-3 text-sm leading-7 text-lake-900/68">
+              <li>① 上午早到避開人潮，先走環湖步道</li>
+              <li>② 體力允許可接飛龍・挑夫步道（預留 30–50 分）</li>
+              <li>③ 午餐選周邊餐飲類型店家，午後避開雷陣雨時段</li>
+              <li>④ 黃昏前回到湖畔拍落羽松／倒影，再順遊員山周邊景點</li>
+            </ol>
+          </article>
+        </div>
+
+        <div class="mt-8">
+          <p class="eyebrow">依人群安排 · 三條針對性路線</p>
+          <div class="mt-5 grid gap-5 md:grid-cols-3">
+            <article class="rounded-[2rem] border border-lake-900/10 bg-white p-7"><p class="font-bold text-lake-950">親子家庭</p><p class="mt-3 text-sm leading-7 text-lake-900/64">走平緩環湖步道，可在湖畔觀察水鳥與魚群（請勿投餵外來飼料）；備嬰兒車可推行路段，避開午後雷陣雨與濕滑山徑。</p></article>
+            <article class="rounded-[2rem] border border-lake-900/10 bg-white p-7"><p class="font-bold text-lake-950">攝影自然</p><p class="mt-3 text-sm leading-7 text-lake-900/64">清晨與黃昏光線最佳；冬季鎖定落羽松轉色與倒影、翠鳥與白鷺；建議偏光鏡與三腳架，保持距離不驚擾野生動物。</p></article>
+            <article class="rounded-[2rem] border border-lake-900/10 bg-white p-7"><p class="font-bold text-lake-950">低體力／無障礙</p><p class="mt-3 text-sm leading-7 text-lake-900/64">環湖步道平緩、多無障礙坡道；可安排湖畔座椅分段休憩，停車場至湖畔距離短；雨天濕滑時放慢腳步。</p></article>
+          </div>
         </div>
       </div>
     </section>
@@ -207,6 +339,30 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
       </div>
     </section>
 
+    <section id="services" class="bg-[#e4ebe4] py-22 sm:py-28">
+      <div class="section-shell">
+        <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <p class="eyebrow">Visitor services · 訪客服務</p>
+            <h2 class="display mt-4 text-4xl text-lake-950 sm:text-5xl">出發前，先知道這些。</h2>
+          </div>
+          <p class="max-w-md text-sm leading-7 text-lake-900/55">以下按「類型」說明，不推薦特定商家；實際以現場與營運單位公告為準。</p>
+        </div>
+
+        <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">洗手間（WC）</p><p class="mt-2 text-sm leading-7 text-lake-900/62">景區設有公共廁所，分布於入口與湖畔節點；山徑沿線設施較少，建議先於入口處使用。</p></div>
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">停車</p><p class="mt-2 text-sm leading-7 text-lake-900/62">周邊設有汽機車停車空間（部分時段收費）；假日熱門時段易滿，建議早到或搭乘大眾運輸。</p></div>
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">餐飲</p><p class="mt-2 text-sm leading-7 text-lake-900/62">周邊有簡餐、飲料、湖畔咖啡等類型店家；非營利科普立場不推薦特定商家，請依當日營業狀況挑選。</p></div>
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">住宿</p><p class="mt-2 text-sm leading-7 text-lake-900/62">員山鄉、宜蘭市一帶有多種住宿類型（民宿、旅館、溫泉旅館），可依預算與行程安排。</p></div>
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">商超／補給</p><p class="mt-2 text-sm leading-7 text-lake-900/62">員山、宜蘭市區有便利商店與生鮮超市可補給飲水與零食；建議入園前先備足飲水。</p></div>
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">加油／充電</p><p class="mt-2 text-sm leading-7 text-lake-900/62">鄰近市區設有加油站；電動車充電站可於導航平台查詢（宜蘭市、員山均有設點），出發前確認電量。</p></div>
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">醫療</p><p class="mt-2 text-sm leading-7 text-lake-900/62">員山鄉、宜蘭市設有診所與醫院；緊急狀況撥打 119，山區訊號較弱處請提早留意。</p></div>
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">大眾運輸</p><p class="mt-2 text-sm leading-7 text-lake-900/62">宜蘭綠16 公車行經宜蘭轉運站、宜蘭火車站與「望龍埤」站；班次有限，出發當日請查即時班表。</p></div>
+          <div class="rounded-3xl bg-white/75 p-6"><p class="font-bold text-lake-950">無障礙</p><p class="mt-2 text-sm leading-7 text-lake-900/62">環湖步道多平緩坡道與座椅；輪椅與嬰兒車可通行主要路段，細節以現場設施為準。</p></div>
+        </div>
+      </div>
+    </section>
+
     <section id="nearby" class="py-22 sm:py-28">
       <div class="section-shell">
         <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -235,11 +391,45 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
         </div>
 
         <figure class="mt-12 grid overflow-hidden rounded-[2.5rem] bg-lake-950 lg:grid-cols-[1.4fr_.6fr]">
-          <img src={photo2} alt="望龍埤湖面、紅橋與水鳥" width="1000" height="667" loading="lazy" class="h-full min-h-[380px] w-full object-cover" />
+          <img src={photo2} alt="望龍埤湖面、紅橋與水鳥（員山鄉）" width="1000" height="667" loading="lazy" class="h-full min-h-[380px] w-full object-cover" />
           <figcaption class="flex flex-col justify-end p-8 text-white sm:p-10"><p class="eyebrow !text-[#e58b78]">A quiet frame</p><p class="display mt-3 text-3xl">留一點空白給湖面。</p><p class="mt-4 text-sm leading-7 text-white/58">望龍埤適合的不是「打卡完就走」，而是給自己一段沒有任務的時間。</p></figcaption>
         </figure>
       </div>
     </section>
+
+    <section id="reviews" class="bg-lake-50 py-22 sm:py-28">
+      <div class="section-shell">
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p class="eyebrow">Google Reviews · 谷歌評價</p>
+            <h2 class="display mt-4 text-4xl text-lake-950 sm:text-5xl">評價來自谷歌地圖用戶評價</h2>
+          </div>
+          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="focus-ring text-sm font-semibold text-bridge underline hover:text-bridge-dark">點擊查看谷歌地圖全部評價 ↗</a>
+        </div>
+
+        <div class="mt-10 grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-stretch">
+          <div class="card-shadow flex flex-col justify-center rounded-[2.5rem] bg-lake-950 p-8 text-white sm:p-10">
+            <div class="flex items-end gap-3">
+              <span class="display text-7xl leading-none text-[#f4d58d]">{ratingValue}</span>
+              <span class="mb-2 text-2xl text-white/70">/ 5</span>
+            </div>
+            <div class="mt-4 flex items-center gap-1.5 text-2xl" aria-hidden="true">
+              <span class="text-[#f4d58d]">★★★★</span><span class="text-white/30">★</span>
+            </div>
+            <p class="mt-3 text-sm text-white/70">{reviewCount.toLocaleString('en-US')} 則 Google 地圖用戶評價</p>
+            <p class="mt-6 text-xs leading-6 text-white/45">評分與評價數同步自谷歌地圖（Google Maps）用戶評價 · {reviewSyncMonth} · <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="underline hover:text-white">點擊查看谷歌地圖全部評價 ↗</a></p>
+          </div>
+          <div class="rounded-[2.5rem] border border-lake-900/10 bg-white p-8 sm:p-10">
+            <p class="eyebrow">評價來源說明</p>
+            <p class="mt-4 text-base leading-8 text-lake-900/72">{reviewSourceNote}</p>
+            <p class="mt-4 text-sm leading-7 text-lake-900/55">本頁所展示的評分與評價數為第三方平台公開彙整資料，非本網站立場；如需查看完整原文與最新動態，請前往谷歌地圖。</p>
+            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="focus-ring mt-7 inline-flex w-fit items-center rounded-full bg-bridge px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-bridge-dark">在谷歌地圖查看全部評價 →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <Weather />
 
     <section class="bg-[#f0e8dd] py-20">
       <div class="section-shell grid gap-8 lg:grid-cols-[.65fr_1.35fr] lg:items-center">
@@ -249,6 +439,24 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
           <p class="rounded-3xl bg-white/65 p-5 text-sm leading-7 text-lake-900/65"><strong class="text-lake-950">夏季防曬：</strong>湖面反光明顯，帶水、帽子、防曬用品與簡易防蚊用品。</p>
           <p class="rounded-3xl bg-white/65 p-5 text-sm leading-7 text-lake-900/65"><strong class="text-lake-950">生態友善：</strong>不追趕水鳥、不丟棄垃圾，盡量減少對湖岸生物的干擾。</p>
           <p class="rounded-3xl bg-white/65 p-5 text-sm leading-7 text-lake-900/65"><strong class="text-lake-950">資訊確認：</strong>特殊天氣、步道維護、店家營業與交通班次，以當日官方或現場公告為準。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="responsibility" class="bg-lake-950 py-22 text-white sm:py-28">
+      <div class="section-shell">
+        <div class="max-w-3xl">
+          <p class="eyebrow !text-[#e58b78]">Stewardship · 科普與訪客責任</p>
+          <h2 class="display mt-4 text-4xl text-lake-950 sm:text-5xl">把湖留給下一個人。</h2>
+          <p class="mt-5 text-lg leading-8 text-white/62">望龍埤是社區與生態共享的空間。以下原則讓它能被更多人、更長時間好好使用。</p>
+        </div>
+        <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <article class="rounded-[2rem] border border-white/10 bg-white/[.055] p-7"><p class="font-bold">無痕山林</p><p class="mt-3 text-sm leading-7 text-white/58">不丟棄垃圾、帶走自己的廢棄物；食物與包裝不留在湖畔或步道。</p></article>
+          <article class="rounded-[2rem] border border-white/10 bg-white/[.055] p-7"><p class="font-bold">不餵食野生動物</p><p class="mt-3 text-sm leading-7 text-white/58">不投餵魚群、水鳥或松鼠；外來飼料會改變習性、影響健康與生態平衡。</p></article>
+          <article class="rounded-[2rem] border border-white/10 bg-white/[.055] p-7"><p class="font-bold">保護水質</p><p class="mt-3 text-sm leading-7 text-white/58">不使用清潔劑入湖、不戲水污染；湖水是公共的，請共同維護。</p></article>
+          <article class="rounded-[2rem] border border-white/10 bg-white/[.055] p-7"><p class="font-bold">尊重在地</p><p class="mt-3 text-sm leading-7 text-white/58">安靜賞景、不採摘植物、不破壞設施；與居民、農田相鄰，請放慢音量。</p></article>
+          <article class="rounded-[2rem] border border-white/10 bg-white/[.055] p-7"><p class="font-bold">安全為先</p><p class="mt-3 text-sm leading-7 text-white/58">雷雨不待於開闊湖畔或樹下；濕滑處慢行，遵守告示與封園指引。</p></article>
+          <article class="rounded-[2rem] border border-white/10 bg-white/[.055] p-7"><p class="font-bold">非營利聲明</p><p class="mt-3 text-sm leading-7 text-white/58">本站為非營利科普性質，內容為公開資訊整理，不構成商業推薦或保證。</p></article>
         </div>
       </div>
     </section>
@@ -273,6 +481,38 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
       <div class="section-shell grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
         <div><p class="display text-3xl">準備好，把今天走慢一點。</p><p class="mt-3 text-sm leading-7 text-white/55">宜蘭縣員山鄉枕山村坡城路 · 24.7766, 121.6990972</p></div>
         <a href="https://maps.app.goo.gl/KK4nDMoRzwuh9FoBA" target="_blank" rel="noopener noreferrer" class="focus-ring inline-flex w-fit items-center rounded-full bg-bridge px-6 py-3 font-bold text-white transition hover:-translate-y-0.5">用 Google 地圖導航 →</a>
+      </div>
+    </section>
+
+    <section id="sources" class="bg-[#11231b] py-16 text-white/75">
+      <div class="section-shell">
+        <p class="eyebrow !text-[#e58b78]">Sources · 資料來源</p>
+        <h2 class="display mt-3 text-3xl text-white">資料來源與授權</h2>
+
+        <nav class="mt-6 text-xs tracking-[.18em] text-white/40" aria-label="地理歸屬">望龍埤 → 員山鄉 → 宜蘭縣 → 台灣</nav>
+
+        <ul class="mt-8 grid gap-4 text-sm sm:grid-cols-2">
+          <li class="rounded-2xl border border-white/10 bg-white/[.04] p-5">
+            <p class="font-bold text-white">評價 · 同步時間 {reviewSyncMonth}</p>
+            <p class="mt-2 leading-6 text-white/55">{reviewSourceNote}</p>
+            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="focus-ring mt-3 inline-flex items-center text-bridge underline hover:text-[#e58b78]">在谷歌地圖查看全部評價 ↗</a>
+          </li>
+          <li class="rounded-2xl border border-white/10 bg-white/[.04] p-5">
+            <p class="font-bold text-white">景點資料</p>
+            <p class="mt-2 leading-6 text-white/55">以宜蘭縣政府旅遊網公開資訊為基礎；交通、停車與店家營業狀態以當日公告為準。</p>
+            <a href={govTourismUrl} target="_blank" rel="noopener noreferrer" class="focus-ring mt-3 inline-flex items-center text-bridge underline hover:text-[#e58b78]">宜蘭縣旅遊網 ↗</a>
+          </li>
+          <li class="rounded-2xl border border-white/10 bg-white/[.04] p-5">
+            <p class="font-bold text-white">實景照片</p>
+            <p class="mt-2 leading-6 text-white/55">頁面實景照片使用 Wikimedia Commons 上的望龍埤真實照片。</p>
+            <a href="https://commons.wikimedia.org/wiki/Category:Wanglong_Lake" target="_blank" rel="noopener noreferrer" class="focus-ring mt-3 inline-flex items-center text-bridge underline hover:text-[#e58b78]">影像來源與授權說明 ↗</a>
+          </li>
+          <li class="rounded-2xl border border-white/10 bg-white/[.04] p-5">
+            <p class="font-bold text-white">地圖</p>
+            <p class="mt-2 leading-6 text-white/55">位置地圖嵌入與導航連結來自 Google 地圖；評分與評價數同步自其用戶評價。</p>
+            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="focus-ring mt-3 inline-flex items-center text-bridge underline hover:text-[#e58b78]">在谷歌地圖開啟 ↗</a>
+          </li>
+        </ul>
       </div>
     </section>
   </main>

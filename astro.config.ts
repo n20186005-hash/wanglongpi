@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // 唯一站點域名設定點。確定域名後只需填寫這裡。
 // 留空時仍可正常建置；canonical / OG URL / JSON-LD URL / sitemap 會自動降級或停用。
-const SITE_URL = '';
+const SITE_URL = 'https://wanglongpi.com';
 
 export default defineConfig({
   site: SITE_URL || undefined,

@@ -24,6 +24,7 @@ const ogImage = Astro.site ? new URL('/og-cover.svg', Astro.site).href : undefin
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     {Astro.site && <link rel="sitemap" href="/sitemap-index.xml" />}
 
     <meta property="og:type" content="website" />
@@ -32,6 +33,7 @@ const ogImage = Astro.site ? new URL('/og-cover.svg', Astro.site).href : undefin
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:alt" content="望龍埤 in 員山鄉, 宜蘭縣" />}
     <meta name="twitter:card" content="summary_large_image" />
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXM22WWPKP"></script>
@@ -41,6 +43,12 @@ const ogImage = Astro.site ? new URL('/og-cover.svg', Astro.site).href : undefin
       gtag('js', new Date());
       gtag('config', 'G-HXM22WWPKP');
     </script>
+
+    {import.meta.env.PROD && <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+      }
+    </script>}
   </head>
   <body>
     <slot />
