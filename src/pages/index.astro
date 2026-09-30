@@ -4,8 +4,8 @@ import Weather from '../components/Weather.astro';
 
 export const prerender = true;
 
-const title = '望龍埤｜宜蘭員山的湖光、朱橋與山林慢旅';
-const description = '望龍埤旅遊指南：環湖步道、九曲橋、飛龍步道、季節遊覽策略、推薦路線、訪客服務與即時天氣，一頁規劃宜蘭員山慢旅。';
+const title = '望龍埤旅遊指南｜宜蘭員山湖畔步道、交通、停車與周邊美食';
+const description = '望龍埤（Wanglongpi）旅遊指南：環湖步道與九曲橋實景照片、公車與自駕交通路線、停車場、周邊美食，以及遊客評價與常見問答一次看。';
 
 const siteUrl = Astro.site ? new URL('/', Astro.site).href : undefined;
 
@@ -19,6 +19,12 @@ const attractionSchema = {
   ...(siteUrl ? { url: siteUrl } : {}),
   ...(siteUrl ? { image: [`${new URL('/images/wanglongpi-lake-main.jpg', siteUrl).href}`] } : {}),
   isAccessibleForFree: true,
+  ...(siteUrl ? { aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.3',
+    reviewCount: '14991',
+    bestRating: '5'
+  } } : {}),
   address: {
     '@type': 'PostalAddress',
     streetAddress: '枕山村坡城路',
@@ -76,7 +82,7 @@ const photo4 = 'https://upload.wikimedia.org/wikipedia/commons/4/47/%E6%9C%9B%E9
 const mapsUrl = 'https://maps.app.goo.gl/KK4nDMoRzwuh9FoBA';
 const govTourismUrl = 'https://travel.yilan.tw';
 const ratingValue = 4.3;
-const reviewCount = 14965;
+const reviewCount = 14991;
 const reviewSyncMonth = '2026 年 9 月';
 const reviewSourceNote = '同步自 Google 地图用户评价，同步时间 2026 年 9 月；版权归原作者与 Google 地图所有。';
 ---
@@ -98,6 +104,7 @@ const reviewSourceNote = '同步自 Google 地图用户评价，同步时间 202
         <a class="focus-ring rounded hover:text-white" href="#weather">天氣</a>
         <a class="focus-ring rounded hover:text-white" href="#services">服務</a>
         <a class="focus-ring rounded hover:text-white" href="#nearby">周邊</a>
+        <a class="focus-ring rounded hover:text-white" href="#photos">相片</a>
         <a class="focus-ring rounded hover:text-white" href="#reviews">評價</a>
         <a class="focus-ring rounded hover:text-white" href="#faq">FAQ</a>
       </nav>
@@ -123,7 +130,7 @@ const reviewSourceNote = '同步自 Google 地图用户评价，同步时间 202
         <aside class="card-shadow rounded-[2rem] border border-white/15 bg-lake-950/58 p-6 backdrop-blur-xl sm:p-8">
           <div class="flex items-center justify-between border-b border-white/14 pb-5">
             <div><p class="text-xs tracking-[.2em] text-white/55">旅遊資訊</p><p class="mt-1 text-xl font-bold">今天怎麼安排</p></div>
-            <div class="text-right"><p class="text-xs text-white/55">公開評分</p><p class="display text-3xl text-[#f4d58d]">4.3<span class="ml-1 text-sm text-white/60">/ 5</span></p><p class="mt-1 text-xs text-white/45">14,965 則評價</p></div>
+            <div class="text-right"><p class="text-xs text-white/55">公開評分</p><p class="display text-3xl text-[#f4d58d]">4.3<span class="ml-1 text-sm text-white/60">/ 5</span></p><p class="mt-1 text-xs text-white/45">{reviewCount.toLocaleString('en-US')} 則評價</p></div>
           </div>
           <dl class="grid grid-cols-2 gap-x-5 gap-y-6 pt-6 text-sm">
             <div><dt class="text-white/48">開放時間</dt><dd class="mt-1 font-semibold">08:00–18:00</dd></div>
@@ -426,6 +433,23 @@ const reviewSourceNote = '同步自 Google 地图用户评价，同步时间 202
             <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="focus-ring mt-7 inline-flex w-fit items-center rounded-full bg-bridge px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-bridge-dark">在谷歌地圖查看全部評價 →</a>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="photos" class="bg-lake-50 py-22 sm:py-28">
+      <div class="section-shell">
+        <div class="max-w-3xl">
+          <p class="eyebrow">Photo gallery · 實景照片</p>
+          <h2 class="display mt-4 text-4xl text-lake-950 sm:text-5xl">望龍埤的樣子，<br />先用照片記起來。</h2>
+          <p class="mt-5 text-base leading-8 text-lake-900/62">以下為望龍埤（Wanglongpi）湖景、九曲橋與周邊實景照片，幫你出發前先建立畫面；實際景觀會隨季節與天氣變化。</p>
+        </div>
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <figure class="overflow-hidden rounded-[2rem]"><img src={photo4} alt="望龍埤湖面與朱紅九曲橋實景照片（宜蘭縣員山鄉）" width="600" height="400" loading="lazy" class="h-56 w-full object-cover" /></figure>
+          <figure class="overflow-hidden rounded-[2rem]"><img src={photo1} alt="望龍埤九曲橋與湖岸綠意實景照片（員山鄉）" width="600" height="400" loading="lazy" class="h-56 w-full object-cover" /></figure>
+          <figure class="overflow-hidden rounded-[2rem]"><img src={photo3} alt="望龍埤夏季樹影與湖面實景照片（宜蘭縣員山鄉）" width="600" height="400" loading="lazy" class="h-56 w-full object-cover" /></figure>
+          <figure class="overflow-hidden rounded-[2rem]"><img src={photo2} alt="望龍埤湖面、紅橋與水鳥實景照片（員山鄉）" width="600" height="400" loading="lazy" class="h-56 w-full object-cover" /></figure>
+        </div>
+        <p class="mt-4 text-xs leading-6 text-lake-900/45">實景照片來源：Wikimedia Commons（望龍埤真實照片）。</p>
       </div>
     </section>
 
