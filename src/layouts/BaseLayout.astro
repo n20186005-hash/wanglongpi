@@ -33,10 +33,10 @@ const ogImage = Astro.site ? new URL('/og-cover.svg', Astro.site).href : undefin
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
-    {ogImage && <meta property="og:image:alt" content="望龍埤 in 員山鄉, 宜蘭縣" />}
+    {ogImage && <meta property="og:image:alt" content="望龍埤指南文字與圖形卡片，非實景照片" />}
     <meta name="twitter:card" content="summary_large_image" />
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXM22WWPKP"></script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-HXM22WWPKP"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}

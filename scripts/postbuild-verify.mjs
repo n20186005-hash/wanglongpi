@@ -2,8 +2,8 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = new URL('..', import.meta.url).pathname;
-const dist = join(root, 'dist');
-if (!existsSync(dist)) throw new Error('dist/ 不存在，請先執行 pnpm build');
+const dist = join(root, 'dist', 'client');
+if (!existsSync(dist) || !existsSync(join(dist,'index.html'))) throw new Error('Missing nonempty public build with required homepage; run npm run build first');
 
 const forbidden = ['example' + '.com', 'local' + 'host', 'chrome-extension' + '://'];
 const textExts = new Set(['.html', '.xml', '.txt', '.js', '.css', '.json', '.map']);

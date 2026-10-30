@@ -1,0 +1,13 @@
+---
+interface Props { photo: 1|2|3|4; dark?: boolean }
+const {photo,dark=false}=Astro.props;
+const records={
+1:{title:'Wang Long Lake 望龍埤 - panoramio.jpg',author:'lienyuan lee',date:'2014-04-23',licence:'CC BY 3.0',licenseUrl:'https://creativecommons.org/licenses/by/3.0/'},
+2:{title:'Wanglong Lake 望龍埤 - panoramio.jpg',author:'lienyuan lee',date:'2014-01-02',licence:'CC BY 3.0',licenseUrl:'https://creativecommons.org/licenses/by/3.0/'},
+3:{title:'望龍埤 夏 - panoramio.jpg',author:'albert_uj_dan',date:'2012-07-21',licence:'CC BY 3.0',licenseUrl:'https://creativecommons.org/licenses/by/3.0/'},
+4:{title:'望龍埤.JPG',author:'Outlookxp',date:'2015-01-11',licence:'CC BY-SA 4.0',licenseUrl:'https://creativecommons.org/licenses/by-sa/4.0/'}
+};
+const p=records[photo];
+---
+<p class:list={['photo-credit',{'photo-credit-dark':dark}]}><a href={'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(p.title)}>{p.title}</a> · {p.author} · <time datetime={p.date}>{p.date}</time> · <a href={p.licenseUrl}>{p.licence}</a><span class="block">版面取景顯示，原始照片未修改；歷史照片不代表目前開放或設施狀態。</span></p>
+<style>.photo-credit{font-size:.72rem;line-height:1.8;margin-top:.75rem;overflow-wrap:anywhere;color:#4a6054}.photo-credit a{text-decoration:underline}.photo-credit-dark{color:#e4ebe4}</style>

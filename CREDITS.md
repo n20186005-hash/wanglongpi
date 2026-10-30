@@ -27,3 +27,12 @@
    - 檔案頁：https://commons.wikimedia.org/wiki/File:%E6%9C%9B%E9%BE%8D%E5%9F%A4.JPG
 
 使用或重新散布照片時，請遵守相應 Creative Commons 授權條款並保留必要署名。
+
+## 本地檔案對應
+
+- wanglongpi-lake-main.jpg：上述第1張；原始位元組未修改。
+- wanglongpi-lake-view.jpg：上述第2張；原始位元組未修改。
+- wanglongpi-summer.jpg：上述第3張；原始位元組未修改。
+- wanglongpi-landscape.jpg：上述第4張；原始位元組未修改。
+
+頁面為版面取景顯示，逐處提供原作、作者、拍攝日期與授權連結。歷史照片不證明目前開放與設施情況；照片許可也不等於取得額外肖像或場所許可。

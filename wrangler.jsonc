@@ -1,12 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "wanglongpi-yilan",
-  "main": "@astrojs/cloudflare/entrypoints/server",
+  "name": "wanglongpi",
+  "main": "src/worker.js",
   "compatibility_date": "2026-09-16",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
     "binding": "ASSETS",
-    "directory": "./dist"
+    "directory": "./dist/client",
+    "run_worker_first": true
   },
   "observability": {
     "enabled": true

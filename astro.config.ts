@@ -10,8 +10,8 @@ const SITE_URL = 'https://wanglongpi.com';
 export default defineConfig({
   site: SITE_URL || undefined,
   output: 'server',
-  adapter: cloudflare(),
-  integrations: [SITE_URL ? sitemap({ namespaces: { news: false, video: false } }) : false],
+  adapter: cloudflare({configPath:"./wrangler.jsonc"}),
+  integrations: [SITE_URL ? sitemap({ namespaces: { news: false, video: false },filter:url=>!/^\/(?:404|api)(?:\/|\.html|$)/.test(new URL(url).pathname) }) : false],
   vite: {
     plugins: [tailwindcss()]
   }
